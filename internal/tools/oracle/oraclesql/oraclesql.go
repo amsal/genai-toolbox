@@ -136,36 +136,58 @@ func (t Tool) Invoke(ctx context.Context, params tools.ParamValues) ([]any, erro
 	}
 	sliceParams := newParams.AsSlice()
 
-	results, err := t.Pool.QueryContext(ctx, newStatement, sliceParams...)
+	// Execute the SQL query with parameters
+	rows, err := t.Pool.QueryContext(ctx, newStatement, sliceParams...)
 	if err != nil {
 		return nil, fmt.Errorf("unable to execute query: %w", err)
 	}
+	defer rows.Close()
 
-	fields, err := results.ColumnTypes()
+	// Get column names
+	cols, err := rows.Columns()
 	if err != nil {
-		return nil, fmt.Errorf("unable to get column types: %w", err)
+		return nil, fmt.Errorf("unable to get column names: %w", err)
 	}
 
-	var out []any
-	for results.Next() {
-		values := make([]any, len(fields))
-		valuePtrs := make([]any, len(fields))
-		for i := range values {
-			valuePtrs[i] = &values[i]
-		}
+	values := make([]any, len(cols))
+	valuePtrs := make([]any, len(cols))
+	for i := range values {
+		valuePtrs[i] = &values[i]
+	}
 
-		if err := results.Scan(valuePtrs...); err != nil {
+	// Prepare the result slice
+	var result []any
+	// Iterate through the rows
+	for rows.Next() {
+		// Scan the row into the value pointers
+		if err := rows.Scan(valuePtrs...); err != nil {
 			return nil, fmt.Errorf("unable to scan row: %w", err)
 		}
 
-		vMap := make(map[string]any)
-		for i, f := range fields {
-			vMap[f.Name()] = values[i]
+		// Create a map for this row
+		rowMap := make(map[string]interface{})
+		for i, col := range cols {
+			val := values[i]
+			// Handle nil values
+			if val == nil {
+				rowMap[col] = nil
+				continue
+			}
+			// Store the value in the map
+			rowMap[col] = val
 		}
-		out = append(out, vMap)
+		result = append(result, rowMap)
 	}
 
-	return out, nil
+	if err = rows.Close(); err != nil {
+		return nil, fmt.Errorf("unable to close rows: %w", err)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating rows: %w", err)
+	}
+
+	return result, nil
 }
 
 func (t Tool) ParseParams(data map[string]any, claims map[string]map[string]any) (tools.ParamValues, error) {
