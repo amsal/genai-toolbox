@@ -32,6 +32,7 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 	yaml "github.com/goccy/go-yaml"
+
 	"github.com/googleapis/genai-toolbox/internal/auth"
 	"github.com/googleapis/genai-toolbox/internal/log"
 	"github.com/googleapis/genai-toolbox/internal/prebuiltconfigs"
@@ -58,6 +59,7 @@ import (
 	_ "github.com/googleapis/genai-toolbox/internal/tools/mysql/mysqlexecutesql"
 	_ "github.com/googleapis/genai-toolbox/internal/tools/mysql/mysqlsql"
 	_ "github.com/googleapis/genai-toolbox/internal/tools/neo4j"
+	_ "github.com/googleapis/genai-toolbox/internal/tools/oracle/oraclesql"
 	_ "github.com/googleapis/genai-toolbox/internal/tools/postgres/postgresexecutesql"
 	_ "github.com/googleapis/genai-toolbox/internal/tools/postgres/postgressql"
 	_ "github.com/googleapis/genai-toolbox/internal/tools/redis"
@@ -80,6 +82,7 @@ import (
 	_ "github.com/googleapis/genai-toolbox/internal/sources/mssql"
 	_ "github.com/googleapis/genai-toolbox/internal/sources/mysql"
 	_ "github.com/googleapis/genai-toolbox/internal/sources/neo4j"
+	_ "github.com/googleapis/genai-toolbox/internal/sources/oracle"
 	_ "github.com/googleapis/genai-toolbox/internal/sources/postgres"
 	_ "github.com/googleapis/genai-toolbox/internal/sources/redis"
 	_ "github.com/googleapis/genai-toolbox/internal/sources/spanner"

@@ -28,6 +28,7 @@ require (
 	github.com/microsoft/go-mssqldb v1.9.2
 	github.com/neo4j/neo4j-go-driver/v5 v5.28.1
 	github.com/redis/go-redis/v9 v9.11.0
+	github.com/sijms/go-ora/v2 v2.9.0
 	github.com/spf13/cobra v1.9.1
 	github.com/valkey-io/valkey-go v1.0.62
 	go.opentelemetry.io/contrib/propagators/autoprop v0.62.0
